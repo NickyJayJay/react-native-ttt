@@ -51,12 +51,15 @@ export default [
   },
   // Test files configuration
   {
-    files: ['**/__tests__/**/*.ts', '**/*.test.ts'],
+    files: ['**/__tests__/**/*.ts', '**/__tests__/**/*.tsx', '**/*.test.ts', '**/*.test.tsx'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
       globals: {
         describe: 'readonly',
@@ -68,10 +71,12 @@ export default [
         beforeAll: 'readonly',
         afterAll: 'readonly',
         jest: 'readonly',
+        global: 'readonly',
       },
     },
     plugins: {
       '@typescript-eslint': tseslint,
+      react: react,
     },
     rules: {
       ...tseslint.configs.recommended.rules,
@@ -86,6 +91,18 @@ export default [
         module: 'readonly',
         require: 'readonly',
         __dirname: 'readonly',
+      },
+    },
+  },
+  // Jest setup file
+  {
+    files: ['jest.setup.js'],
+    languageOptions: {
+      globals: {
+        jest: 'readonly',
+        global: 'writable',
+        console: 'readonly',
+        require: 'readonly',
       },
     },
   },
