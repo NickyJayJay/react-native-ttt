@@ -33,15 +33,6 @@ export default function HomeScreen() {
             variant="secondary"
           />
         </View>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            The computer uses the Minimax algorithm
-          </Text>
-          <Text style={styles.footerText}>
-            to play optimally every time.
-          </Text>
-        </View>
       </View>
     </SafeAreaView>
   );
@@ -79,13 +70,5 @@ const styles = StyleSheet.create({
   },
   buttonSpacer: {
     height: spacing.md,
-  },
-  footer: {
-    marginTop: spacing.xxl,
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: fontSize.sm,
-    color: colors.textLight,
   },
 });
