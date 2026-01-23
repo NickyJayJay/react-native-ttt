@@ -4,8 +4,9 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  withSequence,
 } from 'react-native-reanimated';
-import { colors, spacing, fontSize, borderRadius } from '../../constants/theme';
+import { colors, spacing, fontSize, borderRadius, fonts, springConfigs } from '../../constants/theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -20,19 +21,28 @@ interface ButtonProps {
 
 export function Button({ title, onPress, variant = 'primary', disabled = false }: ButtonProps) {
   const scale = useSharedValue(1);
+  const rotation = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    transform: [
+      { scale: scale.value },
+      { rotate: `${rotation.value}deg` },
+    ],
   }));
 
   const handlePressIn = () => {
     if (!disabled) {
-      scale.value = withSpring(0.97);
+      scale.value = withSpring(0.92, springConfigs.bouncy);
+      rotation.value = withSpring(Math.random() > 0.5 ? 2 : -2, springConfigs.bouncy);
     }
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1);
+    scale.value = withSequence(
+      withSpring(1.05, springConfigs.quick),
+      withSpring(1, springConfigs.bouncy)
+    );
+    rotation.value = withSpring(0, springConfigs.bouncy);
   };
 
   const buttonStyles: ViewStyle[] = [styles.button, styles[`${variant}Button`]];
@@ -62,37 +72,41 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xl,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 200,
+    minWidth: 300,
+    borderWidth: 2,
+    borderStyle: 'dashed',
   },
   primaryButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: 'transparent',
+    borderColor: colors.chalkWhite,
   },
   secondaryButton: {
-    backgroundColor: colors.secondary,
+    backgroundColor: 'transparent',
+    borderColor: colors.textLight,
   },
   outlineButton: {
     backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: colors.primary,
+    borderColor: colors.chalkWhite,
+    borderStyle: 'solid',
   },
   disabledButton: {
     opacity: 0.5,
   },
   text: {
-    fontSize: fontSize.lg,
-    fontWeight: '600',
+    fontSize: fontSize.lg + 2,
+    fontFamily: fonts.chalk,
   },
   primaryText: {
-    color: colors.surface,
+    color: colors.chalkWhite,
   },
   secondaryText: {
-    color: colors.surface,
+    color: colors.textLight,
   },
   outlineText: {
-    color: colors.primary,
+    color: colors.chalkWhite,
   },
   disabledText: {
     color: colors.textLight,

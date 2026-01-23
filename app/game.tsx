@@ -4,10 +4,10 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGame } from '../src/hooks/useGame';
 import { Board, ResultModal, Button } from '../src/components';
-import { colors, spacing, fontSize } from '../src/constants/theme';
+import { colors, spacing, fontSize, fonts } from '../src/constants/theme';
 
 export default function GameScreen() {
-  const { humanGoesFirst } = useLocalSearchParams<{ humanGoesFirst: string }>();
+  const { humanGoesFirst } = useLocalSearchParams<{ humanGoesFirst: string; }>();
 
   const {
     board,
@@ -28,7 +28,7 @@ export default function GameScreen() {
   };
 
   const handleNewGame = () => {
-    router.back();
+    router.replace('/');
   };
 
   const getStatusText = () => {
@@ -98,13 +98,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   title: {
-    fontSize: fontSize.xl,
-    fontWeight: 'bold',
-    color: colors.text,
+    fontSize: fontSize.xxl + 16,
+    fontFamily: fonts.chalk,
+    color: colors.chalkWhite,
     marginBottom: spacing.xs,
   },
   status: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.xl,
+    fontFamily: fonts.chalk,
     color: colors.textLight,
     marginBottom: spacing.sm,
   },
@@ -113,16 +114,15 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   playerText: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.lg,
+    fontFamily: fonts.chalk,
     color: colors.text,
   },
   xColor: {
     color: colors.xColor,
-    fontWeight: 'bold',
   },
   oColor: {
     color: colors.oColor,
-    fontWeight: 'bold',
   },
   boardContainer: {
     flex: 1,

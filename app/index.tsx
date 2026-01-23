@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button } from '../src/components';
-import { colors, spacing, fontSize } from '../src/constants/theme';
+import { Button, TicTacToeChalk } from '../src/components';
+import { colors, spacing, fontSize, fonts } from '../src/constants/theme';
 
 export default function HomeScreen() {
   const startGame = (humanGoesFirst: boolean) => {
@@ -16,6 +16,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.header}>
+          <TicTacToeChalk />
           <Text style={styles.title}>Tic Tac Toe</Text>
           <Text style={styles.subtitle}>Can you beat the unbeatable AI?</Text>
         </View>
@@ -54,13 +55,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxl,
   },
   title: {
-    fontSize: fontSize.xxl + 8,
-    fontWeight: 'bold',
-    color: colors.text,
+    fontSize: fontSize.xxl + 16,
+    fontFamily: fonts.chalk,
+    color: colors.chalkWhite,
     marginBottom: spacing.sm,
   },
   subtitle: {
     fontSize: fontSize.lg,
+    fontFamily: fonts.chalk,
     color: colors.textLight,
   },
   buttonContainer: {

@@ -5,9 +5,11 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
+  withSequence,
+  withRepeat,
 } from 'react-native-reanimated';
 import { Button } from '../Button/Button';
-import { colors, spacing, fontSize, borderRadius } from '../../constants/theme';
+import { colors, spacing, fontSize, borderRadius, fonts, springConfigs } from '../../constants/theme';
 import type { GameResult } from '../../types/game';
 
 interface ResultModalProps {
@@ -43,26 +45,64 @@ function getMessageColor(result: GameResult): string {
 }
 
 export function ResultModal({ visible, result, onPlayAgain }: ResultModalProps) {
-  const scale = useSharedValue(0.8);
+  const scale = useSharedValue(0.5);
   const opacity = useSharedValue(0);
+  const translateX = useSharedValue(0);
+  const rotation = useSharedValue(0);
 
   useEffect(() => {
     if (visible) {
-      scale.value = withSpring(1, { damping: 15 });
+      // Reset values
+      translateX.value = 0;
+      rotation.value = 0;
+
+      // Animate in with wobbly spring
+      scale.value = withSpring(1, springConfigs.wobbly);
       opacity.value = withTiming(1, { duration: 200 });
+
+      // Result-specific animations
+      if (result === 'lose') {
+        // Shake animation for lose
+        translateX.value = withSequence(
+          withTiming(-12, { duration: 50 }),
+          withTiming(12, { duration: 100 }),
+          withTiming(-12, { duration: 100 }),
+          withTiming(12, { duration: 100 }),
+          withTiming(-6, { duration: 75 }),
+          withTiming(6, { duration: 75 }),
+          withTiming(0, { duration: 50 })
+        );
+      } else if (result === 'tie') {
+        // Wobble animation for tie
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(3, { duration: 150 }),
+            withTiming(-3, { duration: 300 }),
+            withTiming(0, { duration: 150 })
+          ),
+          2,
+          false
+        );
+      }
     } else {
-      scale.value = 0.8;
+      scale.value = 0.5;
       opacity.value = 0;
+      translateX.value = 0;
+      rotation.value = 0;
     }
-  }, [visible, scale, opacity]);
+  }, [visible, result, scale, opacity, translateX, rotation]);
 
   const animatedContainerStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    transform: [
+      { scale: scale.value },
+      { translateX: translateX.value },
+      { rotate: `${rotation.value}deg` },
+    ],
     opacity: opacity.value,
   }));
 
   const animatedOverlayStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value * 0.5,
+    opacity: opacity.value * 0.6,
   }));
 
   return (
@@ -106,22 +146,20 @@ const styles = StyleSheet.create({
   content: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xl,
+    borderWidth: 3,
+    borderColor: colors.chalkWhite,
     padding: spacing.xl,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 8,
     minWidth: 280,
   },
   message: {
-    fontSize: fontSize.xxl,
-    fontWeight: 'bold',
+    fontSize: fontSize.xxl + 4,
+    fontFamily: fonts.chalk,
     marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.lg,
+    fontFamily: fonts.chalk,
     color: colors.textLight,
     marginBottom: spacing.lg,
   },
