@@ -6,6 +6,7 @@ export type GameResult = 'win' | 'lose' | 'tie' | null;
 
 export interface GameState {
   board: Board;
+  gameHistory: any[];
   currentPlayer: Player;
   humanPlayer: Player;
   computerPlayer: Player;
@@ -15,5 +16,5 @@ export interface GameState {
 }
 
 export type GameAction =
-  | { type: 'MAKE_MOVE'; index: number }
-  | { type: 'RESET_GAME'; humanGoesFirst: boolean };
+  | { type: 'MAKE_MOVE'; index: number; }
+  | { type: 'RESET_GAME'; humanGoesFirst: boolean; };

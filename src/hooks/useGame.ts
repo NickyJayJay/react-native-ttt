@@ -10,12 +10,13 @@ import type { GameState, GameAction, Player, GameResult, Board } from '../types/
 
 const COMPUTER_MOVE_DELAY = 500;
 
-function createInitialState(humanGoesFirst: boolean = true): GameState {
+function createInitialState(humanGoesFirst: boolean = true, history): GameState {
   const humanPlayer: Player = humanGoesFirst ? 'X' : 'O';
   const computerPlayer: Player = humanGoesFirst ? 'O' : 'X';
 
   return {
     board: createEmptyBoard(),
+    gameHistory: history || [],
     currentPlayer: 'X', // X always goes first
     humanPlayer,
     computerPlayer,
@@ -40,6 +41,9 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       const isGameOver = winner !== null || boardFull;
 
       let gameResult: GameResult = null;
+      let history = [...state.gameHistory];
+      console.log('state.gameHistory: ', state.gameHistory);
+
       if (winner === state.humanPlayer) {
         gameResult = 'win';
       } else if (winner === state.computerPlayer) {
@@ -48,8 +52,17 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         gameResult = 'tie';
       }
 
+      if (gameResult) {
+        history.push({
+          timeStamp: Date.now(),
+          gameResult,
+          winner
+        });
+      }
+
       return {
         ...state,
+        gameHistory: history,
         board: newBoard,
         currentPlayer: state.currentPlayer === 'X' ? 'O' : 'X',
         winner,
@@ -59,7 +72,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'RESET_GAME': {
-      return createInitialState(action.humanGoesFirst);
+      return createInitialState(action.humanGoesFirst, state.gameHistory);
     }
 
     default:
@@ -128,11 +141,7 @@ export function useGame(initialHumanGoesFirst: boolean = true): UseGameReturn {
   const isHumanTurn = state.currentPlayer === state.humanPlayer && !state.isGameOver;
 
   return {
-    board: state.board,
-    currentPlayer: state.currentPlayer,
-    humanPlayer: state.humanPlayer,
-    isGameOver: state.isGameOver,
-    gameResult: state.gameResult,
+    ...state,
     isHumanTurn,
     makeMove,
     resetGame,

@@ -17,7 +17,10 @@ export default function GameScreen() {
     isHumanTurn,
     makeMove,
     resetGame,
+    gameHistory
   } = useGame(humanGoesFirst === 'true');
+
+  console.log('gameHistory', gameHistory);
 
   useEffect(() => {
     resetGame(humanGoesFirst === 'true');
@@ -57,6 +60,19 @@ export default function GameScreen() {
           </View>
         </View>
 
+        <View>
+          {/* <Text>
+            {JSON.stringify(gameHistory)}
+          </Text> */}
+          {gameHistory.map((history) => (
+            <View style={styles.history}>
+              <Text style={styles.historyText}>{history.gameResult}</Text>
+              <Text style={styles.historyText}>{new Date(history.timeStamp).toLocaleTimeString()}</Text>
+              <Text style={styles.historyText}>{history.winner}</Text>
+            </View>
+          ))}
+        </View>
+
         <View style={styles.boardContainer}>
           <Board
             board={board}
@@ -84,6 +100,15 @@ export default function GameScreen() {
 }
 
 const styles = StyleSheet.create({
+  history: {
+    flexDirection: 'row',
+    gap: spacing.lg
+  },
+  historyText: {
+    fontSize: fontSize.lg,
+    fontFamily: fonts.chalk,
+    color: colors.textLight,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,
